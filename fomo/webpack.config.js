@@ -55,7 +55,9 @@ module.exports = {
   },
   resolve: {
     alias: {
-      'vue$': 'vue/dist/vue'
+      'vue$': 'vue/dist/vue',
+      'moment': 'moment/moment.js',
+      'moment-timezones': 'moment-timezone/builds/moment-timezone-with-data.js'
     }
   },
   devServer: {

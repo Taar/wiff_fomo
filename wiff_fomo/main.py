@@ -2,6 +2,7 @@ import json
 import copy
 import pytz
 import time
+from datetime import timedelta
 from email import utils
 from .util import parse_date_time, check_time_collision
 from itertools import count
@@ -12,6 +13,8 @@ def main(path, save_path):
     with open(path, 'r') as fp:
         films = json.load(fp)
 
+    print("Add Missing end times ...")
+    films = add_missing_end_times(films)
     print("Injecting date data ...")
     films = inject_useful_data(films)
     print("Adding collision data ...")
@@ -21,6 +24,16 @@ def main(path, save_path):
 
     with open(save_path, 'w') as fp:
         json.dump(films, fp)
+
+
+def add_missing_end_times(films):
+
+    for film in films:
+        if not film['End Time']:
+            start_time = parse_date_time(film['Date'], film['Start Time'])
+            end_time = start_time + timedelta(minutes=film['Run Time'])
+            film['End Time'] = end_time.strftime("%I:%M %p")
+    return films
 
 
 def inject_useful_data(films):
@@ -47,8 +60,9 @@ def add_collision_data(films):
 
 def local_time_stamp(date):
     timezone = pytz.timezone('US/Eastern')
-    tuple_ = timezone.localize(date).utctimetuple()
-    return int(time.mktime(tuple_))
+    tuple_ = timezone.localize(date)
+    fmt = '%Y-%m-%d %H:%M:%S %Z%z'
+    return tuple_.strftime(fmt)
 
 
 def make_json_serializable(films):

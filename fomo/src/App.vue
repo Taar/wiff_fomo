@@ -8,6 +8,12 @@
           <collisions v-bind:film="film"></collisions>
         </li>
       </ul>
+      <h3>You missed out on these films</h3>
+      <ul id="missed-films" class="films">
+        <li v-for="film in missedFilms" class="film missed">
+          <film v-bind:film="film"></film>
+        </li>
+      </ul>
     </div>
   </div>
 </template>
@@ -19,20 +25,19 @@ let json = require('json!./assets/test.json');
 
 import Collisions from './Collisions.vue';
 import Film from './Film.vue';
+import moment from 'moment';
+import momentTimezones from 'moment-timezones';
 
 export default {
   name: 'app',
   components: { Collisions, Film },
   data () {
+    let timezone = 'US/Eastern';
     let films = [];
     let missedFilms = [];
-    let currentDate = new Date();
+    let currentDate = moment().tz(timezone);
     for (let film of json) {
-      console.log("start date", film.start_time);
-      let startDate = new Date(film.state_time);
-      console.log(startDate);
-      console.log(currentDate);
-      console.log(startDate > currentDate);
+      let startDate = moment(film.start_time).tz(timezone);
       if (startDate > currentDate) {
         films.push(film);
       } else {
@@ -61,5 +66,7 @@ export default {
   border-radius: 15px;
   background-color: #ededed;
   padding: 5px;
+}
+.missed {
 }
 </style>
