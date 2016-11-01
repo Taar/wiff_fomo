@@ -1,5 +1,8 @@
 import json
 import copy
+import pytz
+import time
+from email import utils
 from .util import parse_date_time, check_time_collision
 from itertools import count
 
@@ -42,14 +45,20 @@ def add_collision_data(films):
     return films_copy
 
 
+def local_time_stamp(date):
+    timezone = pytz.timezone('US/Eastern')
+    tuple_ = timezone.localize(date).utctimetuple()
+    return int(time.mktime(tuple_))
+
+
 def make_json_serializable(films):
     for film in films:
         for c_film in film['collisions']:
-            c_film['start_time'] = c_film['start_time'].isoformat()
-            c_film['end_time'] = c_film['end_time'].isoformat()
+            c_film['start_time'] = local_time_stamp(c_film['start_time'])
+            c_film['end_time'] = local_time_stamp(c_film['end_time'])
 
-        film['start_time'] = film['start_time'].isoformat()
-        film['end_time'] = film['end_time'].isoformat()
+        film['start_time'] = local_time_stamp(film['start_time'])
+        film['end_time'] = local_time_stamp(film['end_time'])
 
     return films
 

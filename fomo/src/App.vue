@@ -24,9 +24,24 @@ export default {
   name: 'app',
   components: { Collisions, Film },
   data () {
+    let films = [];
+    let missedFilms = [];
+    let currentDate = new Date();
+    for (let film of json) {
+      console.log("start date", film.start_time);
+      let startDate = new Date(film.state_time);
+      console.log(startDate);
+      console.log(currentDate);
+      console.log(startDate > currentDate);
+      if (startDate > currentDate) {
+        films.push(film);
+      } else {
+        missedFilms.push(film);
+      }
+    }
     return {
-      msg: 'Welcome to Your Vue.js App',
-      films: json
+      films: films,
+      missedFilms: missedFilms
     }
   },
   methods: {
