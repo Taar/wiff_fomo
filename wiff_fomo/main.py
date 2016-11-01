@@ -17,6 +17,8 @@ def main(path, save_path):
     films = add_missing_end_times(films)
     print("Injecting date data ...")
     films = inject_useful_data(films)
+    print("Ordering by date ...")
+    films = order_by_date(films)
     print("Adding collision data ...")
     films = add_collision_data(films)
     print("Replacing date objects as strings ...")
@@ -24,6 +26,14 @@ def main(path, save_path):
 
     with open(save_path, 'w') as fp:
         json.dump(films, fp)
+
+
+def by_date(film):
+    return film['start_time']
+
+
+def order_by_date(films):
+    return sorted(films, key=by_date)
 
 
 def add_missing_end_times(films):
